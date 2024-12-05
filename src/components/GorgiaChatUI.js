@@ -38,11 +38,11 @@ const GorgiaChatUI = () => {
 
     try {
       const response = await fetch('https://gorgia-rag-chat-3.onrender.com/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: inputMessage }),
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: inputMessage }),
       });
 
       const data = await response.json();
