@@ -1,5 +1,4 @@
-// GorgiaChatUI.jsx
-import React, { useState, useRef, useEffect } from 'react';
+ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
 import ProductCarousel from './ProductCarousel';
 
@@ -27,12 +26,12 @@ const GorgiaChatUI = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    const newMessage = {
+    // Add user message
+    const userMessage = {
       type: 'user',
       content: inputMessage
     };
-
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
 
@@ -48,27 +47,27 @@ const GorgiaChatUI = () => {
       const data = await response.json();
 
       if (data.error) {
+        // Handle error response
         setMessages(prev => [...prev, {
           type: 'bot',
           content: data.error
         }]);
-      } else {
-        let botMessage = {
-          type: 'bot'
+      } else if (data.response) {
+        // Handle formatted response from Flask
+        const botMessage = {
+          type: 'bot',
+          content: data.response.content
         };
 
-        if (typeof data.response === 'object' && data.response.type === 'product_list') {
-          botMessage.content = data.response.message;
+        // Add products if available
+        if (data.response.type === 'product_list') {
           botMessage.products = data.response.products;
-        } else if (typeof data.response === 'object' && data.response.message) {
-          botMessage.content = data.response.message;
-        } else {
-          botMessage.content = String(data.response);
         }
 
         setMessages(prev => [...prev, botMessage]);
       }
     } catch (error) {
+      // Handle network or other errors
       setMessages(prev => [...prev, {
         type: 'bot',
         content: `Error: ${error.message}`
@@ -102,7 +101,7 @@ const GorgiaChatUI = () => {
               : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
           }`}
         >
-          <p className="whitespace-pre-wrap">{String(message.content)}</p>
+          <p className="whitespace-pre-wrap">{message.content}</p>
         </div>
       </div>
     );
